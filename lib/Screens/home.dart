@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
@@ -77,12 +78,37 @@ class _homePageState extends State<homePage> {
         ),
       );
 
+  int timeLeft = 5;
+  void _startCountDown() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (timeLeft > 0) {
+        setState(() {
+          timeLeft--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          buildRadios(),
+          Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    timeLeft == 0 ? "done" : timeLeft.toString(),
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ]),
+          ),
+
+          // Container(child: buildtimer()),
+          Container(child: buildRadios()),
           Container(
             padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
             margin: EdgeInsets.fromLTRB(25, 5, 20, 20),
@@ -106,18 +132,17 @@ class _homePageState extends State<homePage> {
               },
             ),
           ),
-          ElevatedButton(
-            child: Text("_launchPhoneURL"),
-            onPressed: () {
-              _launchPhoneURL(textEditingController.text);
-            },
-          ),
-          ElevatedButton(
-            child: Text("_callNumber"),
+          ElevatedButton.icon(
             onPressed: () {
               _callNumber(textEditingController.text);
             },
-          )
+            icon: Icon(
+              // <-- Icon
+              Icons.phone,
+              size: 24.0,
+            ),
+            label: Text('Call'), // <-- Text
+          ),
         ],
       ),
     );
